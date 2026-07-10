@@ -165,7 +165,7 @@
     <div class="divider"></div>
     <div class="buttons-row">
       <button id="yesBtn">Avec joie</button>
-      <button id="noBtn">Pas maintenant</button>
+      <button id="noBtn">Non</button>
     </div>
   </div>
 </div>
@@ -238,7 +238,12 @@
   }, { passive: false });
   noBtn.addEventListener('click', (e) => {
     e.preventDefault();
-    moveNoButton();
+    card.innerHTML = `
+      <div class="eyebrow">Message</div>
+      <h1>C'est noté, et ce n'est pas grave</h1>
+      <div class="divider"></div>
+      <p>Merci d'avoir pris le temps de lire ça jusqu'au bout. Je respecte totalement ta réponse, et j'espère que tu passes une belle journée. 🌿</p>
+    `;
   });
  
   window.addEventListener('resize', () => {
