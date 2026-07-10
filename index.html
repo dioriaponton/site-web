@@ -3,101 +3,170 @@
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta charset="UTF-8">
-<title>Veux‑tu sortir avec moi ?</title>
+<title>Une question pour toi</title>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 <style>
-  * {
-    box-sizing: border-box;
-  }
+  * { box-sizing: border-box; }
   html, body {
-    margin: 0;
-    padding: 0;
-    width: 100%;
-    height: 100%;
+    margin: 0; padding: 0; width: 100%; height: 100%;
   }
   body {
     min-height: 100vh;
-    min-height: 100dvh; /* fix mobile viewport height (barre d'adresse) */
+    min-height: 100dvh;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: #fff0f5; /* rose pastel très pâle */
-    font-family: 'Segoe UI', Tahoma, sans-serif;
+    background: linear-gradient(160deg, #eef3e6 0%, #f7f3e8 50%, #eef0e2 100%);
+    font-family: 'Poppins', sans-serif;
     overflow: hidden;
-    position: fixed; /* empêche tout scroll/débordement sur mobile */
+    position: fixed;
     inset: 0;
   }
-  .card {
-    max-width: 90vw;
-    width: 350px;
-    text-align: center;
-    background: #fff;
-    padding: 2rem 1.75rem;
-    border-radius: 12px;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+ 
+  /* Feuilles décoratives flottantes en fond */
+  .leaf {
+    position: fixed;
+    font-size: 22px;
+    opacity: 0.35;
+    animation: float linear infinite;
+    pointer-events: none;
+    user-select: none;
+    z-index: 0;
+  }
+  @keyframes float {
+    0% { transform: translateY(-10vh) translateX(0) rotate(0deg); opacity: 0; }
+    10% { opacity: 0.35; }
+    90% { opacity: 0.35; }
+    100% { transform: translateY(110vh) translateX(20px) rotate(200deg); opacity: 0; }
+  }
+ 
+  .frame {
     position: relative;
+    max-width: 92vw;
+    width: 420px;
     z-index: 1;
   }
+ 
+  .card {
+    background: #fffdf8;
+    border-radius: 4px;
+    padding: 2.5rem 2rem 2.25rem;
+    text-align: center;
+    box-shadow: 0 20px 50px rgba(60, 80, 40, 0.15);
+    position: relative;
+    border: 1px solid #e3e6d6;
+  }
+ 
+  /* Coins décoratifs façon feuillage */
+  .card::before, .card::after {
+    content: '🌿';
+    position: absolute;
+    font-size: 1.6rem;
+    opacity: 0.7;
+  }
+  .card::before { top: -14px; left: -10px; transform: rotate(-20deg); }
+  .card::after { bottom: -14px; right: -10px; transform: rotate(160deg); }
+ 
+  .eyebrow {
+    font-size: 0.75rem;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #8a9a6f;
+    margin-bottom: 0.75rem;
+    font-weight: 600;
+  }
+ 
   h1 {
-    font-size: clamp(1.4rem, 5vw, 2rem);
-    color: #ff69b4; /* rose tendre */
-    margin-bottom: 1.5rem;
-    word-wrap: break-word;
+    font-family: 'Caveat', cursive;
+    font-size: clamp(2.1rem, 8vw, 2.9rem);
+    color: #4a5a3a;
+    margin: 0 0 1.5rem;
+    line-height: 1.15;
   }
+ 
   p {
-    font-size: clamp(0.9rem, 3.5vw, 1rem);
-    line-height: 1.5;
-    color: #555;
+    font-size: clamp(0.88rem, 3.2vw, 0.98rem);
+    line-height: 1.7;
+    color: #6b7460;
+    font-weight: 300;
   }
+ 
+  .divider {
+    width: 40px;
+    height: 1px;
+    background: #b8c4a0;
+    margin: 1.25rem auto;
+  }
+ 
   .buttons-row {
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 0.75rem;
+    gap: 0.9rem;
     flex-wrap: nowrap;
     position: relative;
     min-height: 3rem;
+    margin-top: 1.75rem;
   }
+ 
   button {
-    padding: 0.8rem 1.5rem;
-    font-size: 1rem;
+    padding: 0.75rem 1.7rem;
+    font-size: 0.95rem;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 400;
     border: none;
-    border-radius: 8px;
+    border-radius: 2px;
     cursor: pointer;
-    transition: transform .2s;
+    transition: all .25s ease;
     white-space: nowrap;
+    letter-spacing: 0.5px;
   }
+ 
   #yesBtn {
-    background: #ffb6c1;
-    color: #fff;
+    background: #6b8e4e;
+    color: #fdfdf8;
   }
+  #yesBtn:hover {
+    background: #5a7a40;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(107, 142, 78, 0.35);
+  }
+ 
   #noBtn {
-    background: #ff69b4;
-    color: #fff;
-    position: fixed; /* se déplace par rapport à l'écran entier, jamais hors cadre */
+    background: transparent;
+    color: #a3ab8f;
+    border: 1px solid #d3d9c3;
+    position: fixed;
     left: 0;
     top: 0;
   }
-  .heart {
+ 
+  .petal {
     position: fixed;
-    width: 30px;
-    height: 30px;
     top: -40px;
-    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="%23ff69b4" d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>') no-repeat center/contain;
-    animation: fall 4s linear infinite;
+    font-size: 20px;
     pointer-events: none;
+    animation: fall 4.5s linear infinite;
+    z-index: 2;
   }
   @keyframes fall {
     0% { transform: translateY(0) rotate(0deg); opacity: 1; }
-    100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
+    100% { transform: translateY(110vh) rotate(300deg); opacity: 0; }
   }
 </style>
 </head>
 <body>
-<div class="card" id="mainCard">
-  <h1>Veux‑tu sortir avec moi ?</h1>
-  <div class="buttons-row">
-    <button id="yesBtn">Oui</button>
-    <button id="noBtn">Non</button>
+<div id="leavesContainer"></div>
+ 
+<div class="frame">
+  <div class="card" id="mainCard">
+    <div class="eyebrow">Petit mot pour toi</div>
+    <h1>Est‑ce que tu voudrais<br>sortir avec moi ?</h1>
+    <div class="divider"></div>
+    <div class="buttons-row">
+      <button id="yesBtn">Avec joie</button>
+      <button id="noBtn">Pas maintenant</button>
+    </div>
   </div>
 </div>
  
@@ -106,36 +175,50 @@
   const noBtn = document.getElementById('noBtn');
   const card = document.getElementById('mainCard');
   const body = document.body;
+  const leavesContainer = document.getElementById('leavesContainer');
  
-  // Fonction pour générer des cœurs qui tombent
-  function spawnHeart() {
-    const heart = document.createElement('div');
-    heart.className = 'heart';
-    const size = Math.random() * 20 + 15;
-    heart.style.width = size + 'px';
-    heart.style.height = size + 'px';
-    const maxLeft = Math.max(0, window.innerWidth - size);
-    heart.style.left = Math.random() * maxLeft + 'px';
-    heart.style.animationDuration = (Math.random() * 2 + 3) + 's';
-    body.appendChild(heart);
-    setTimeout(() => heart.remove(), 4200);
+  const leafEmojis = ['🌿', '🍃', '🌱'];
+ 
+  function createLeaves() {
+    const count = 14;
+    for (let i = 0; i < count; i++) {
+      const leaf = document.createElement('div');
+      leaf.className = 'leaf';
+      leaf.textContent = leafEmojis[Math.floor(Math.random() * leafEmojis.length)];
+      leaf.style.left = Math.random() * 100 + 'vw';
+      leaf.style.animationDuration = (Math.random() * 8 + 10) + 's';
+      leaf.style.animationDelay = (Math.random() * 10) + 's';
+      leavesContainer.appendChild(leaf);
+    }
+  }
+  createLeaves();
+ 
+  const petalEmojis = ['🌸', '🌼', '✿'];
+  function spawnPetal() {
+    const petal = document.createElement('div');
+    petal.className = 'petal';
+    petal.textContent = petalEmojis[Math.floor(Math.random() * petalEmojis.length)];
+    petal.style.left = Math.random() * (window.innerWidth - 24) + 'px';
+    petal.style.animationDuration = (Math.random() * 2 + 3.5) + 's';
+    petal.style.fontSize = (Math.random() * 8 + 16) + 'px';
+    body.appendChild(petal);
+    setTimeout(() => petal.remove(), 4700);
   }
  
-  let heartInterval = null;
+  let petalInterval = null;
  
-  // Gestion du bouton "Oui"
   yesBtn.addEventListener('click', () => {
-    noBtn.style.display = 'none'; // le bouton "Non" disparaît une fois "Oui" cliqué
+    noBtn.style.display = 'none';
     card.innerHTML = `
-      <h1>Mon cœur bat pour toi ❤️</h1>
-      <p>Depuis que je t'ai rencontrée, chaque jour est plus lumineux. Ton sourire, ta gentillesse, ton intelligence et ta beauté font de toi la personne la plus précieuse à mes yeux.</p>
-      <p>Je veux partager d'innombrables moments avec toi, rire, grandir et construire de merveilleux souvenirs ensemble.</p>
-      <p>Accepterais‑tu de commencer cette belle aventure à deux ?</p>
+      <div class="eyebrow">Merci</div>
+      <h1>Ça me touche vraiment</h1>
+      <div class="divider"></div>
+      <p>J'ai hâte de découvrir avec toi de nouveaux endroits, de nouvelles conversations, et de laisser cette histoire pousser tranquillement, comme tout ce qui compte vraiment.</p>
+      <p style="margin-top:1rem;">Est‑ce que tu voudrais sortir avec moi ? 🌱</p>
     `;
-    heartInterval = setInterval(spawnHeart, 300);
+    petalInterval = setInterval(spawnPetal, 320);
   });
  
-  // Déplace le bouton "Non" à une position aléatoire, toujours visible à l'écran
   function moveNoButton() {
     const btnWidth = noBtn.offsetWidth;
     const btnHeight = noBtn.offsetHeight;
@@ -148,35 +231,25 @@
     noBtn.style.top = `${randY}px`;
   }
  
-  // Sur ordinateur : le bouton fuit au survol
   noBtn.addEventListener('mouseenter', moveNoButton);
- 
-  // Sur mobile/tactile : le bouton fuit au toucher, avant même le clic
   noBtn.addEventListener('touchstart', (e) => {
     e.preventDefault();
     moveNoButton();
   }, { passive: false });
- 
   noBtn.addEventListener('click', (e) => {
     e.preventDefault();
     moveNoButton();
   });
  
-  // Repositionner le bouton "Non" si la fenêtre change de taille (rotation mobile, etc.)
   window.addEventListener('resize', () => {
-    if (noBtn.style.position === 'fixed' && noBtn.dataset.moved === 'true') {
-      moveNoButton();
-    }
+    if (noBtn.dataset.moved === 'true') moveNoButton();
   });
  
-  // Position initiale du bouton "Non" (centré, dans le flux normal au départ)
   function initNoButtonPosition() {
     noBtn.style.position = 'static';
   }
- 
   window.addEventListener('load', initNoButtonPosition);
  
-  // Dès la première interaction, on bascule en position "fixed" pour le rendre mobile
   function activateFloatingNo() {
     noBtn.style.position = 'fixed';
     noBtn.dataset.moved = 'true';
