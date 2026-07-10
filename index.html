@@ -219,7 +219,12 @@
     petalInterval = setInterval(spawnPetal, 320);
   });
  
+  let dodgeCount = 0;
+  const maxDodges = 3; // au-delà, le bouton arrête de fuir
+ 
   function moveNoButton() {
+    if (dodgeCount >= maxDodges) return;
+    dodgeCount++;
     const btnWidth = noBtn.offsetWidth;
     const btnHeight = noBtn.offsetHeight;
     const margin = 12;
