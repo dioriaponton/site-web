@@ -220,10 +220,13 @@
   });
  
   let dodgeCount = 0;
-  const maxDodges = 3; // au-delà, le bouton arrête de fuir
+  const maxDodges = 3; // au-delà, le bouton arrête de fuir et devient cliquable
+  let hasBeenActivated = false;
  
   function moveNoButton() {
-    if (dodgeCount >= maxDodges) return;
+    if (noBtn.style.position !== 'fixed') {
+      noBtn.style.position = 'fixed';
+    }
     dodgeCount++;
     const btnWidth = noBtn.offsetWidth;
     const btnHeight = noBtn.offsetHeight;
@@ -236,37 +239,43 @@
     noBtn.style.top = `${randY}px`;
   }
  
-  noBtn.addEventListener('mouseenter', moveNoButton);
-  noBtn.addEventListener('touchstart', (e) => {
-    e.preventDefault();
-    moveNoButton();
-  }, { passive: false });
-  noBtn.addEventListener('click', (e) => {
-    e.preventDefault();
+  function showNoMessage() {
     card.innerHTML = `
       <div class="eyebrow">Message</div>
       <h1>C'est noté, et ce n'est pas grave</h1>
       <div class="divider"></div>
       <p>Merci d'avoir pris le temps de lire ça jusqu'au bout. Je respecte totalement ta réponse, et j'espère que tu passes une belle journée. 🌿</p>
     `;
+  }
+ 
+  // Gestion unifiée : sur ordinateur, le survol fait fuir le bouton.
+  // Sur mobile, le premier toucher fait fuir (s'il reste des esquives),
+  // sinon le clic déclenche directement le message.
+  noBtn.addEventListener('mouseenter', () => {
+    if (dodgeCount < maxDodges) {
+      moveNoButton();
+    }
+  });
+ 
+  noBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    if (dodgeCount < maxDodges) {
+      moveNoButton();
+    } else {
+      showNoMessage();
+    }
   });
  
   window.addEventListener('resize', () => {
-    if (noBtn.dataset.moved === 'true') moveNoButton();
+    if (noBtn.style.position === 'fixed' && dodgeCount > 0 && dodgeCount < maxDodges) {
+      moveNoButton();
+    }
   });
  
   function initNoButtonPosition() {
     noBtn.style.position = 'static';
   }
   window.addEventListener('load', initNoButtonPosition);
- 
-  function activateFloatingNo() {
-    noBtn.style.position = 'fixed';
-    noBtn.dataset.moved = 'true';
-    moveNoButton();
-  }
-  noBtn.addEventListener('mouseenter', activateFloatingNo, { once: true });
-  noBtn.addEventListener('touchstart', activateFloatingNo, { once: true });
 </script>
 </body>
 </html>
