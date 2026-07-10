@@ -1,42 +1,70 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta charset="UTF-8">
 <title>Veux‑tu sortir avec moi ?</title>
 <style>
-  body {
+  * {
+    box-sizing: border-box;
+  }
+  html, body {
     margin: 0;
-    height: 100vh;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+  }
+  body {
+    min-height: 100vh;
+    min-height: 100dvh; /* fix mobile viewport height (barre d'adresse) */
     display: flex;
     align-items: center;
     justify-content: center;
     background: #fff0f5; /* rose pastel très pâle */
     font-family: 'Segoe UI', Tahoma, sans-serif;
     overflow: hidden;
+    position: fixed; /* empêche tout scroll/débordement sur mobile */
+    inset: 0;
   }
   .card {
+    max-width: 90vw;
+    width: 350px;
     text-align: center;
     background: #fff;
-    padding: 2rem 3rem;
+    padding: 2rem 1.75rem;
     border-radius: 12px;
     box-shadow: 0 8px 20px rgba(0,0,0,0.1);
     position: relative;
     z-index: 1;
   }
   h1 {
-    font-size: 2rem;
+    font-size: clamp(1.4rem, 5vw, 2rem);
     color: #ff69b4; /* rose tendre */
     margin-bottom: 1.5rem;
+    word-wrap: break-word;
+  }
+  p {
+    font-size: clamp(0.9rem, 3.5vw, 1rem);
+    line-height: 1.5;
+    color: #555;
+  }
+  .buttons-row {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: nowrap;
+    position: relative;
+    min-height: 3rem;
   }
   button {
     padding: 0.8rem 1.5rem;
-    margin: 0 0.5rem;
     font-size: 1rem;
     border: none;
     border-radius: 8px;
     cursor: pointer;
     transition: transform .2s;
+    white-space: nowrap;
   }
   #yesBtn {
     background: #ffb6c1;
@@ -45,35 +73,40 @@
   #noBtn {
     background: #ff69b4;
     color: #fff;
-    position: absolute;
+    position: fixed; /* se déplace par rapport à l'écran entier, jamais hors cadre */
+    left: 0;
+    top: 0;
   }
   .heart {
-    position: absolute;
+    position: fixed;
     width: 30px;
     height: 30px;
+    top: -40px;
     background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="%23ff69b4" d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>') no-repeat center/contain;
     animation: fall 4s linear infinite;
     pointer-events: none;
   }
   @keyframes fall {
-    0% { transform: translateY(-100vh) rotate(0deg); opacity: 1; }
-    100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+    0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
   }
 </style>
 </head>
 <body>
 <div class="card" id="mainCard">
   <h1>Veux‑tu sortir avec moi ?</h1>
-  <button id="yesBtn">Oui</button>
-  <button id="noBtn">Non</button>
+  <div class="buttons-row">
+    <button id="yesBtn">Oui</button>
+    <button id="noBtn">Non</button>
+  </div>
 </div>
-
+ 
 <script>
   const yesBtn = document.getElementById('yesBtn');
   const noBtn = document.getElementById('noBtn');
   const card = document.getElementById('mainCard');
   const body = document.body;
-
+ 
   // Fonction pour générer des cœurs qui tombent
   function spawnHeart() {
     const heart = document.createElement('div');
@@ -81,59 +114,76 @@
     const size = Math.random() * 20 + 15;
     heart.style.width = size + 'px';
     heart.style.height = size + 'px';
-    heart.style.left = Math.random() * (window.innerWidth - size) + 'px';
+    const maxLeft = Math.max(0, window.innerWidth - size);
+    heart.style.left = Math.random() * maxLeft + 'px';
     heart.style.animationDuration = (Math.random() * 2 + 3) + 's';
     body.appendChild(heart);
-    // Retirer le cœur après l'animation
-    setTimeout(() => heart.remove(), 4000);
+    setTimeout(() => heart.remove(), 4200);
   }
-
-  // Boucle de création de cœurs
+ 
   let heartInterval = null;
-
+ 
   // Gestion du bouton "Oui"
   yesBtn.addEventListener('click', () => {
-    // Nettoyer la vue initiale
+    noBtn.style.display = 'none'; // le bouton "Non" disparaît une fois "Oui" cliqué
     card.innerHTML = `
       <h1>Mon cœur bat pour toi ❤️</h1>
-      <p>Depuis que je t’ai rencontrée, chaque jour est plus lumineux. Ton sourire, ta gentillesse, ton intelligence et ta beauté font de toi la personne la plus précieuse à mes yeux.</p>
-      <p>Je veux partager d’innombrables moments avec toi, rire, grandir et construire de merveilleux souvenirs ensemble.</p>
+      <p>Depuis que je t'ai rencontrée, chaque jour est plus lumineux. Ton sourire, ta gentillesse, ton intelligence et ta beauté font de toi la personne la plus précieuse à mes yeux.</p>
+      <p>Je veux partager d'innombrables moments avec toi, rire, grandir et construire de merveilleux souvenirs ensemble.</p>
       <p>Accepterais‑tu de commencer cette belle aventure à deux ?</p>
     `;
-    // Lancer les cœurs
     heartInterval = setInterval(spawnHeart, 300);
   });
-
-  // Fonction pour déplacer le bouton "Non" de façon aléatoire
+ 
+  // Déplace le bouton "Non" à une position aléatoire, toujours visible à l'écran
   function moveNoButton() {
     const btnWidth = noBtn.offsetWidth;
     const btnHeight = noBtn.offsetHeight;
-    const maxX = window.innerWidth - btnWidth;
-    const maxY = window.innerHeight - btnHeight;
-    const randX = Math.random() * maxX;
-    const randY = Math.random() * maxY;
+    const margin = 12;
+    const maxX = Math.max(margin, window.innerWidth - btnWidth - margin);
+    const maxY = Math.max(margin, window.innerHeight - btnHeight - margin);
+    const randX = Math.random() * (maxX - margin) + margin;
+    const randY = Math.random() * (maxY - margin) + margin;
     noBtn.style.left = `${randX}px`;
     noBtn.style.top = `${randY}px`;
   }
-
-  // Quand la souris approche ou clique sur "Non"
+ 
+  // Sur ordinateur : le bouton fuit au survol
   noBtn.addEventListener('mouseenter', moveNoButton);
-  noBtn.addEventListener('mouseover', moveNoButton);
-  noBtn.addEventListener('click', () => {
-    alert('C’est vraiment triste… Mais je respecte ton choix.');
+ 
+  // Sur mobile/tactile : le bouton fuit au toucher, avant même le clic
+  noBtn.addEventListener('touchstart', (e) => {
+    e.preventDefault();
+    moveNoButton();
+  }, { passive: false });
+ 
+  noBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    moveNoButton();
   });
-
-  // Position initiale du bouton "Non" (centre de la carte)
+ 
+  // Repositionner le bouton "Non" si la fenêtre change de taille (rotation mobile, etc.)
+  window.addEventListener('resize', () => {
+    if (noBtn.style.position === 'fixed' && noBtn.dataset.moved === 'true') {
+      moveNoButton();
+    }
+  });
+ 
+  // Position initiale du bouton "Non" (centré, dans le flux normal au départ)
   function initNoButtonPosition() {
-    const rect = card.getBoundingClientRect();
-    const btnWidth = noBtn.offsetWidth;
-    const btnHeight = noBtn.offsetHeight;
-    noBtn.style.left = `${rect.left + rect.width/2 - btnWidth/2}px`;
-    noBtn.style.top = `${rect.top + rect.height/2 - btnHeight/2}px`;
+    noBtn.style.position = 'static';
   }
-
-  // Attendre que le DOM soit prêt et centrer le bouton "Non"
+ 
   window.addEventListener('load', initNoButtonPosition);
+ 
+  // Dès la première interaction, on bascule en position "fixed" pour le rendre mobile
+  function activateFloatingNo() {
+    noBtn.style.position = 'fixed';
+    noBtn.dataset.moved = 'true';
+    moveNoButton();
+  }
+  noBtn.addEventListener('mouseenter', activateFloatingNo, { once: true });
+  noBtn.addEventListener('touchstart', activateFloatingNo, { once: true });
 </script>
 </body>
 </html>
